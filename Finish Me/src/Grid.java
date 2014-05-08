@@ -1,4 +1,3 @@
-
 public class Grid {
 
 	private int maxX;
@@ -7,6 +6,10 @@ public class Grid {
 	private int screenXOffset;
 	private int screenYOffset;
 	private int[][] coordinateGrid;
+	private final int numTokenCells = 4;
+	public int currentTokenX = 0;
+	public int currentTokenY = 0;
+	private int[] currentToken = { 0, 0 };
 
 	public Grid(int maxX, int maxY, int screenXOffset, int screenYOffset, int cellSize) {
 		this.maxX = maxX;
@@ -18,11 +21,52 @@ public class Grid {
 	}
 
 	public void occupyTokenCell(int x, int y){
+		if (x > 9 || x < 0 || y < 0 || y > 19) {
+			System.out.print("Failed to occupy token cell.");
+			return;
+		}
 		coordinateGrid[x][y] = 1;
 	}
 	
 	public void occupyNonTokenCell(int x, int y){
+		if (x > 9 || x < 0 || y < 0 || y > 19) {
+			System.out.print("Failed to occupy non token cell.");
+			return;
+		}
 		coordinateGrid[x][y] = 2;
+	}
+	
+	public boolean checkValidTokenPostion(int offset) {
+		for (int i = 0; i < numTokenCells; i++) { 
+			int x = Token.tokenRotationCellXPosition[currentToken[0]][currentToken[1]][i]; 
+			int y = Token.tokenRotationCellYposition[currentToken[0]][currentToken[1]][i]; 
+			if (x + currentTokenX + offset > maxX - 1 || x + currentTokenX  + offset < 0 || 
+					y + currentTokenY + offset > maxY - 1 || y + currentTokenY + offset < 0 ||
+					coordinateGrid[x + currentTokenX + offset][y] == 2 || 
+					coordinateGrid[x][y + currentTokenY + offset] == 2) 
+			{
+				return false;			
+			}
+		}
+		return true;
+	}
+	
+	public void reDrawTokens() {
+		for (int i = 0; i < numTokenCells; i++) {
+			occupyTokenCell(
+					Token.tokenRotationCellXPosition[currentToken[0]][currentToken[1]][i] + currentTokenX,
+					Token.tokenRotationCellYposition[currentToken[0]][currentToken[1]][i] + currentTokenY);
+		}
+	}
+	
+	public void drawRandomToken() {
+		currentToken[0] = (int) (Math.random() * 7);
+		currentToken[1] = (int) (Math.random() * 4);
+		for (int i = 0; i < numTokenCells; i++) {
+			occupyTokenCell(
+					Token.tokenRotationCellXPosition[currentToken[0]][currentToken[1]][i] + 4,
+					Token.tokenRotationCellYposition[currentToken[0]][currentToken[1]][i]);
+		}
 	}
 	
 	public int getMaxX() { return maxX; }
@@ -31,5 +75,6 @@ public class Grid {
 	public int getXOffset() { return screenXOffset; }
 	public int getYOffset() { return screenYOffset; }
 	public int[][] getGrid() { return coordinateGrid; }
+
 
 }

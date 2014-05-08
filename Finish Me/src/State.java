@@ -6,7 +6,7 @@ public class State {
 		private int state = GAME;
 		
 		public State() {
-			setState(GAME);
+			setState(MAINMENU);
 		}
 		
 		public int getState() {

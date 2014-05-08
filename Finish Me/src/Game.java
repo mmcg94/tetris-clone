@@ -2,40 +2,17 @@ import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-
+import java.awt.event.KeyEvent;
 import javax.imageio.ImageIO;
 import java.io.IOException;
 
 public class Game {
 	
 	private Grid mainGrid, nextGrid;
-	private int[] currentToken = { 0, 0 };
-	private int currentTokenX = 4;
-	private int currentTokenY = 0;
-	private int[][][] tokenRotationCellXPosition = {
-			{ { 0, 1, 2, 0 }, { 0, 1, 1, 1 }, { 0, 1, 2, 2 }, { 1, 1, 1, 2 } },
-			{ { 0, 1, 2, 2 }, { 0, 1, 1, 1 }, { 0, 0, 1, 2 }, { 1, 1, 1, 2 } },
-			{ { 0, 1, 1, 2 }, { 0, 0, 1, 1 }, { 0, 1, 1, 2 }, { 0, 0, 1, 1 } },
-			{ { 0, 1, 1, 2 }, { 0, 0, 1, 1 }, { 0, 1, 1, 2 }, { 0, 0, 1, 1 } },
-			{ { 0, 1, 1, 2 }, { 0, 1, 1, 1 }, { 0, 1, 1, 2 }, { 1, 1, 1, 2 } },
-			{ { 0, 1, 2, 3 }, { 2, 2, 2, 2 }, { 0, 1, 2, 3 }, { 2, 2, 2, 2 } },
-			{ { 1, 1, 2, 2 }, { 1, 1, 2, 2 }, { 1, 1, 2, 2 }, { 1, 1, 2, 2 } } };
-	private int[][][] tokenRotationCellYposition = {
-			{ { 1, 1, 1, 2 }, { 0, 0, 1, 2 }, { 1, 1, 1, 0 }, { 0, 1, 2, 2 } },
-			{ { 1, 1, 1, 2 }, { 2, 0, 1, 2 }, { 0, 1, 1, 1 }, { 0, 1, 2, 0 } },
-			{ { 2, 2, 1, 1 }, { 0, 1, 1, 2 }, { 2, 2, 1, 1 }, { 0, 1, 1, 2 } },
-			{ { 1, 1, 2, 2 }, { 1, 2, 0, 1 }, { 1, 1, 2, 2 }, { 1, 2, 0, 1 } },
-			{ { 1, 1, 2, 1 }, { 1, 0, 1, 2 }, { 1, 0, 1, 1 }, { 0, 1, 2, 1 } },
-			{ { 2, 2, 2, 2 }, { 0, 1, 2, 3 }, { 2, 2, 2, 2 }, { 0, 1, 2, 3 } },
-			{ { 1, 2, 1, 2 }, { 1, 2, 1, 2 }, { 1, 2, 1, 2 }, { 1, 2, 1, 2 } } };
-	//private int[] tokenColor = new int[7];
-	private int numTokenCells = 4;
 
 	public Game() {
 		mainGrid = new Grid(10, 20, 5, 5, 44);
 		nextGrid = new Grid(5, 5, 20, 20, 8);
-		//key = new Keyboard();
-		//addKeyListener(key);
 	}
 
 	public void update(int updates) {
@@ -58,8 +35,34 @@ public class Game {
 	}
 
 	private void updateMainGrid() {
-		// TODO Auto-generated method stub
+		if (Keyboard.keyTyped(KeyEvent.VK_LEFT)) {
+			moveTokenLeft();
+		} else if (Keyboard.keyTyped(KeyEvent.VK_RIGHT)) {
+			moveTokenRight();
+		} else if (Keyboard.keyTyped(KeyEvent.VK_DOWN)) {
+			
+		}
+		if (Keyboard.keyTyped(KeyEvent.VK_ENTER) || Keyboard.keyTyped(KeyEvent.VK_SPACE)) {
+			
+		}
 
+	}
+	
+	private void moveTokenLeft() {
+		if (mainGrid.checkValidTokenPostion(-1)) {
+			mainGrid.currentTokenX--;
+			eraseToken(mainGrid);
+			mainGrid.reDrawTokens();
+		}
+	}
+
+	private void moveTokenRight() {
+		if (mainGrid.checkValidTokenPostion(1)) {
+			mainGrid.currentTokenX++;
+			eraseToken(mainGrid);
+			mainGrid.reDrawTokens();
+		}
+			
 	}
 
 	public void render(Window window) {
@@ -102,9 +105,9 @@ public class Game {
 	}
 
 	private void moveTokenDown() {
-		currentTokenY++;
-		eraseToken();
-		reDrawTokens();
+		mainGrid.currentTokenY++;
+		eraseToken(mainGrid);
+		mainGrid.reDrawTokens();
 	}
 
 	private int occupiedBelow(int[][] grid, int x, int y) {
@@ -115,50 +118,25 @@ public class Game {
 	}
 
 	private int occupiedRight(int[][] grid, int x, int y) {
+		if (x+1 > 9) {
+			return 1;
+		}
 		if (grid[x + 1][y] == 0) {
 			return 1;
 		} else
 			return 0;
 	}
 
-	private void drawRandomToken() {
-		currentToken[0] = (int) (Math.random() * 7);
-		currentToken[1] = (int) (Math.random() * 4);
-		for (int i = 0; i < numTokenCells; i++) {
-			mainGrid.occupyTokenCell(
-					tokenRotationCellXPosition[currentToken[0]][currentToken[1]][i] + 4,
-					tokenRotationCellYposition[currentToken[0]][currentToken[1]][i]);
-			nextGrid.occupyTokenCell(
-					tokenRotationCellXPosition[currentToken[0]][currentToken[1]][i],
-					tokenRotationCellYposition[currentToken[0]][currentToken[1]][i]);
-		}
-	}
 
-	private void reDrawTokens() {
-		for (int i = 0; i < numTokenCells; i++) {
-			mainGrid.occupyTokenCell(
-					tokenRotationCellXPosition[currentToken[0]][currentToken[1]][i] + currentTokenX,
-					tokenRotationCellYposition[currentToken[0]][currentToken[1]][i] + currentTokenY);
-			nextGrid.occupyTokenCell(
-					tokenRotationCellXPosition[currentToken[0]][currentToken[1]][i],
-					tokenRotationCellYposition[currentToken[0]][currentToken[1]][i]);
-		}
-	}
-
-	private void eraseToken() {
-		for (int x = 0; x < 10; x++) {
-			for (int y = 0; y < 20; y++) {
-				mainGrid.getGrid()[x][y] = 0;
-			}
-		}
-		for (int x = 0; x < 4; x++) {
-			for (int y = 0; y < 4; y++) {
-				nextGrid.getGrid()[x][y] = 0;
+	private void eraseToken(Grid grid) {
+		for (int x = 0; x < grid.getMaxX(); x++) {
+			for (int y = 0; y < grid.getMaxY(); y++) {
+				eraseCell(grid, x, y);
 			}
 		}
 	}
 
-	private void eraseCell(int x, int y) {
-		mainGrid.getGrid()[x][y] = 0;
+	private void eraseCell(Grid grid, int x, int y) {
+		grid.getGrid()[x][y] = 0;
 	}
 }

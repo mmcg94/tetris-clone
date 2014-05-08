@@ -18,6 +18,7 @@ public class Main implements Runnable{
 		mainMenu = new Menu();
 		state = new State();
 		window = new Window();
+		window.addKeyListener(new Keyboard());
 	}
 	
 	public synchronized void start() {
@@ -38,10 +39,27 @@ public class Main implements Runnable{
 	
 	public void render() {
 		if (state.getState() == state.MAINMENU) {
-			mainMenu.render();
+			if (mainMenu.getOptions() == null) {
+				setUpMainMenu();
+			}
+			mainMenu.render(window.getWidth() / 2 - 30, window.getHeight() / 4, window);
 		} else if (state.getState() == state.GAME) {
 			game.render(window);
 		}
+	}
+
+	private void setUpMainMenu() {
+		MenuOption[] options = { new MenuOption("Play", new Action() {
+			public void action() {
+				state.setState(state.GAME);
+			}
+		}), new MenuOption("Options", null), new MenuOption("About", null), new MenuOption("Quit", new Action() {
+			public void action() {
+				System.exit(0);
+			}
+		}) };
+		mainMenu.setOptions(options );
+		
 	}
 
 	public void run() {
@@ -72,7 +90,11 @@ public class Main implements Runnable{
 	}
 
 	private void update(int updates) {
-		game.update(updates);
+		if (state.getState() == state.MAINMENU) {
+			mainMenu.update();
+		} else if (state.getState() == state.GAME) {
+			game.update(updates);
+		}
 		
 	}
 	
