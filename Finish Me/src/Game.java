@@ -20,7 +20,7 @@ public class Game {
 		updateNextToken();
 		updateBankToken();
 		if (updates == 58) {
-			moveTokenDown();
+			moveToken(0, 1);
 		}
 	}
 
@@ -36,9 +36,9 @@ public class Game {
 
 	private void updateMainGrid() {
 		if (Keyboard.keyTyped(KeyEvent.VK_LEFT)) {
-			moveTokenLeft();
+			moveToken(-1, 0);
 		} else if (Keyboard.keyTyped(KeyEvent.VK_RIGHT)) {
-			moveTokenRight();
+			moveToken(1, 0);
 		} else if (Keyboard.keyTyped(KeyEvent.VK_DOWN)) {
 			
 		}
@@ -47,24 +47,15 @@ public class Game {
 		}
 
 	}
+
+	private void moveToken(int x, int y) {
+		if (mainGrid.checkValidTokenPostion(x, y)) {
+			mainGrid.changeCurrentTokenCoords(x, y);
+			eraseToken(mainGrid);
+			mainGrid.reDrawTokens();
+		}
+	}
 	
-	private void moveTokenLeft() {
-		if (mainGrid.checkValidTokenPostion(-1)) {
-			mainGrid.currentTokenX--;
-			eraseToken(mainGrid);
-			mainGrid.reDrawTokens();
-		}
-	}
-
-	private void moveTokenRight() {
-		if (mainGrid.checkValidTokenPostion(1)) {
-			mainGrid.currentTokenX++;
-			eraseToken(mainGrid);
-			mainGrid.reDrawTokens();
-		}
-			
-	}
-
 	public void render(Window window) {
 		BufferStrategy bs = window.getBufferStrategy();
 		Graphics g = bs .getDrawGraphics();
@@ -104,11 +95,6 @@ public class Game {
 		}
 	}
 
-	private void moveTokenDown() {
-		mainGrid.currentTokenY++;
-		eraseToken(mainGrid);
-		mainGrid.reDrawTokens();
-	}
 
 	private int occupiedBelow(int[][] grid, int x, int y) {
 		if (grid[x][y + 1] == 0) {

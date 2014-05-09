@@ -36,14 +36,14 @@ public class Grid {
 		coordinateGrid[x][y] = 2;
 	}
 	
-	public boolean checkValidTokenPostion(int offset) {
+	public boolean checkValidTokenPostion(int xOffset, int yOffset) {
 		for (int i = 0; i < numTokenCells; i++) { 
 			int x = Token.tokenRotationCellXPosition[currentToken[0]][currentToken[1]][i]; 
 			int y = Token.tokenRotationCellYposition[currentToken[0]][currentToken[1]][i]; 
-			if (x + currentTokenX + offset > maxX - 1 || x + currentTokenX  + offset < 0 || 
-					y + currentTokenY + offset > maxY - 1 || y + currentTokenY + offset < 0 ||
-					coordinateGrid[x + currentTokenX + offset][y] == 2 || 
-					coordinateGrid[x][y + currentTokenY + offset] == 2) 
+			if (x + currentTokenX + xOffset > maxX - 1 || x + currentTokenX  + xOffset < 0 || 
+					y + currentTokenY + yOffset > maxY - 1 || y + currentTokenY + yOffset < 0 ||
+					coordinateGrid[x + currentTokenX + xOffset][y] == 2 || 
+					coordinateGrid[x][y + currentTokenY + yOffset] == 2) 
 			{
 				return false;			
 			}
@@ -75,6 +75,11 @@ public class Grid {
 	public int getXOffset() { return screenXOffset; }
 	public int getYOffset() { return screenYOffset; }
 	public int[][] getGrid() { return coordinateGrid; }
+
+	public void changeCurrentTokenCoords(int x, int y) {
+		currentTokenX = currentTokenX + x;
+		currentTokenY = currentTokenY + y;
+	}
 
 
 }
