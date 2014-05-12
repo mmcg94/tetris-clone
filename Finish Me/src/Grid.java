@@ -121,6 +121,16 @@ public class Grid {
 		return currentColor;
 	}
 
+	public boolean currentTokenReachedBottom() {
+		for (int i = 0; i < numTokenCells; i++) {
+			int y = Token.tokenRotationCellYposition[currentToken[0]][currentToken[1]][i] + currentTokenY;
+			if (y >= maxY - 1) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 
 
 }

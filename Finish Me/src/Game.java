@@ -12,7 +12,7 @@ public class Game {
 	private Boolean randomFlag = true;
 
 	public Game() {
-		mainGrid = new Grid(10, 16, 5, 5, 44);
+		mainGrid = new Grid(10, 20, 5, 5, 44);
 		nextGrid = new Grid(5, 5, 20, 20, 8);
 	}
 
@@ -22,7 +22,7 @@ public class Game {
 		updateNextToken();
 		updateBankToken();
 		if (updates == 58) {
-			if (mainGrid.currentTokenY + 3 >= mainGrid.getMaxY()){
+			if (mainGrid.currentTokenReachedBottom()){
 				turnOnRandom();
 			} else{
 				moveToken(0, 1);	
